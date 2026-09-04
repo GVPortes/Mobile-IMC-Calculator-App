@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ScrollView,
-  Alert,
+  Vibration,
 } from 'react-native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
@@ -20,6 +20,11 @@ export default function Form({ isDarkMode }) {
   const [imc, setImc] = useState(null);
   const [classification, setClassification] = useState('');
   const [textButton, setTextButton] = useState('Calcular');
+
+  // Estados de validação estilizada
+  const [errorMessageHeight, setErrorMessageHeight] = useState(null);
+  const [errorMessageWeight, setErrorMessageWeight] = useState(null);
+  const [generalError, setGeneralError] = useState(null);
 
   function calculateImcClassification(imcValue) {
     if (imcValue < 18.5) {
@@ -41,12 +46,29 @@ export default function Form({ isDarkMode }) {
     const cleanWeight = weight.replace(',', '.').trim();
     const cleanHeight = height.replace(',', '.').trim();
 
-    if (!cleanWeight || !cleanHeight) {
+    let hasError = false;
+
+    if (!cleanHeight) {
+      setErrorMessageHeight('campo obrigatório*');
+      hasError = true;
+    } else {
+      setErrorMessageHeight(null);
+    }
+
+    if (!cleanWeight) {
+      setErrorMessageWeight('campo obrigatório*');
+      hasError = true;
+    } else {
+      setErrorMessageWeight(null);
+    }
+
+    if (hasError) {
+      Vibration.vibrate(200);
+      setGeneralError('Por favor, preencha os campos obrigatórios.');
       setImc(null);
       setClassification('');
       setTextButton('Calcular');
       setMessageImc('Preencha o peso e altura');
-      Alert.alert('Atenção', 'Digite seu peso e sua altura');
       return;
     }
 
@@ -54,9 +76,16 @@ export default function Form({ isDarkMode }) {
     let numHeight = parseFloat(cleanHeight);
 
     if (isNaN(numWeight) || isNaN(numHeight) || numWeight <= 0 || numHeight <= 0) {
-      Alert.alert('Erro', 'Por favor, insira valores válidos.');
+      Vibration.vibrate(200);
+      setGeneralError('Insira valores numéricos válidos maiores que zero.');
+      setImc(null);
       return;
     }
+
+    // Limpa erros caso passe na validação
+    setGeneralError(null);
+    setErrorMessageHeight(null);
+    setErrorMessageWeight(null);
 
     // Converte cm para metros se o usuário digitar ex: 175
     if (numHeight > 3) {
@@ -79,6 +108,9 @@ export default function Form({ isDarkMode }) {
     setClassification('');
     setMessageImc('Preencha o peso e altura');
     setTextButton('Calcular');
+    setErrorMessageHeight(null);
+    setErrorMessageWeight(null);
+    setGeneralError(null);
   }
 
   const dynamicStyles = {
@@ -92,6 +124,18 @@ export default function Form({ isDarkMode }) {
       backgroundColor: isDarkMode ? '#0F172A' : '#F1F5F9',
       borderColor: isDarkMode ? '#334155' : '#E2E8F0',
       color: isDarkMode ? '#F8FAFC' : '#1E293B',
+    },
+    inputError: {
+      borderColor: '#EF4444',
+      borderWidth: 1.5,
+      backgroundColor: isDarkMode ? '#281318' : '#FFF5F5',
+    },
+    bannerError: {
+      backgroundColor: isDarkMode ? '#3B1219' : '#FEE2E2',
+      borderColor: isDarkMode ? '#881337' : '#FCA5A5',
+    },
+    bannerText: {
+      color: isDarkMode ? '#FECDD3' : '#B91C1C',
     },
     resetText: {
       color: isDarkMode ? '#94A3B8' : '#64748B',
@@ -108,26 +152,69 @@ export default function Form({ isDarkMode }) {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.form}>
-            <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
-            <TextInput
-              style={[styles.input, dynamicStyles.input]}
-              onChangeText={setHeight}
-              value={height}
-              placeholder="Ex. 1.75 ou 175 cm"
-              placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
-              keyboardType="numeric"
-            />
+            {/* Campo Altura */}
+            <View style={styles.fieldGroup}>
+              <View style={styles.labelRow}>
+                <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
+                {errorMessageHeight && (
+                  <Text style={styles.errorMessage}>{errorMessageHeight}</Text>
+                )}
+              </View>
+              <TextInput
+                style={[
+                  styles.input,
+                  dynamicStyles.input,
+                  errorMessageHeight && dynamicStyles.inputError,
+                ]}
+                onChangeText={(text) => {
+                  setHeight(text);
+                  if (errorMessageHeight) setErrorMessageHeight(null);
+                  if (generalError) setGeneralError(null);
+                }}
+                value={height}
+                placeholder="Ex. 1.75 ou 175 cm"
+                placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+                keyboardType="numeric"
+              />
+            </View>
 
-            <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
-            <TextInput
-              style={[styles.input, dynamicStyles.input]}
-              onChangeText={setWeight}
-              value={weight}
-              placeholder="Ex. 75.3"
-              placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
-              keyboardType="numeric"
-            />
+            {/* Campo Peso */}
+            <View style={styles.fieldGroup}>
+              <View style={styles.labelRow}>
+                <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
+                {errorMessageWeight && (
+                  <Text style={styles.errorMessage}>{errorMessageWeight}</Text>
+                )}
+              </View>
+              <TextInput
+                style={[
+                  styles.input,
+                  dynamicStyles.input,
+                  errorMessageWeight && dynamicStyles.inputError,
+                ]}
+                onChangeText={(text) => {
+                  setWeight(text);
+                  if (errorMessageWeight) setErrorMessageWeight(null);
+                  if (generalError) setGeneralError(null);
+                }}
+                value={weight}
+                placeholder="Ex. 75.3"
+                placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+                keyboardType="numeric"
+              />
+            </View>
 
+            {/* Alerta Estilizado Geral */}
+            {generalError && (
+              <View style={[styles.errorBanner, dynamicStyles.bannerError]}>
+                <Text style={styles.errorBannerIcon}>⚠️</Text>
+                <Text style={[styles.errorBannerText, dynamicStyles.bannerText]}>
+                  {generalError}
+                </Text>
+              </View>
+            )}
+
+            {/* Botão de Ação */}
             <TouchableOpacity
               style={styles.buttonCalculator}
               onPress={imcCalculator}
@@ -136,7 +223,8 @@ export default function Form({ isDarkMode }) {
               <Text style={styles.textButtonCalculator}>{textButton}</Text>
             </TouchableOpacity>
 
-            {imc && (
+            {/* Botão de Limpar */}
+            {(imc || weight || height || generalError) && (
               <TouchableOpacity
                 style={styles.buttonReset}
                 onPress={handleReset}
@@ -148,6 +236,7 @@ export default function Form({ isDarkMode }) {
               </TouchableOpacity>
             )}
 
+            {/* Resultado */}
             <ResultImc
               messageResultImc={messageImc}
               resultImc={imc}
@@ -155,6 +244,7 @@ export default function Form({ isDarkMode }) {
               isDarkMode={isDarkMode}
             />
 
+            {/* Tabela de Referência */}
             <TableImc
               isDarkMode={isDarkMode}
               currentClassification={classification}
@@ -186,11 +276,24 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingHorizontal: 25,
   },
+  fieldGroup: {
+    marginBottom: 16,
+  },
+  labelRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+    paddingHorizontal: 4,
+  },
   formLabel: {
     fontSize: 16,
     fontWeight: '600',
-    paddingLeft: 4,
-    marginBottom: 6,
+  },
+  errorMessage: {
+    fontSize: 12,
+    color: '#EF4444',
+    fontWeight: '700',
   },
   input: {
     width: '100%',
@@ -198,8 +301,25 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     paddingHorizontal: 16,
     fontSize: 16,
-    marginBottom: 16,
     borderWidth: 1,
+  },
+  errorBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+    marginBottom: 14,
+    borderWidth: 1,
+  },
+  errorBannerIcon: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  errorBannerText: {
+    fontSize: 13,
+    fontWeight: '600',
+    flex: 1,
   },
   buttonCalculator: {
     borderRadius: 12,
@@ -208,7 +328,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#FF0043',
     paddingVertical: 14,
-    marginTop: 10,
+    marginTop: 4,
     shadowColor: '#FF0043',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,

@@ -34,7 +34,11 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
   - Peso normal $(18.5 - 24.9)$
   - Sobrepeso $(25.0 - 29.9)$
   - Obesidade $(\ge 30.0)$
-- [x] **Validação de Formulário:** Alertas claros caso algum campo esteja vazio ou com valores inválidos.
+- [x] **Validação Visual e Feedback Háptico:**
+  - Mensagens de erro inline (*"campo obrigatório\*"*) diretamente nos inputs com bordas avermelhadas.
+  - Alerta estilizado no layout com ícone sem popups intrusivos.
+  - Vibração tátil do aparelho (`Vibration.vibrate`) em caso de erro.
+  - Limpeza automática dos erros conforme o usuário digita.
 - [x] **Tema Escuro (Dark Mode):** Alternância dinâmica entre Modo Claro e Escuro com detecção inicial do tema do sistema operacional (`useColorScheme`).
 - [x] **Experiência do Usuário (UX):**
   - Ocultamento automático do teclado ao tocar fora dos campos (`TouchableWithoutFeedback`).
