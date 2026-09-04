@@ -7,9 +7,11 @@ import {
   StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
   Alert,
 } from 'react-native';
 import ResultImc from './ResultImc';
+import TableImc from './TableImc';
 
 export default function Form({ isDarkMode }) {
   const [weight, setWeight] = useState('');
@@ -26,8 +28,10 @@ export default function Form({ isDarkMode }) {
       return 'Peso normal';
     } else if (imcValue < 30) {
       return 'Sobrepeso';
+    } else if (imcValue < 35) {
+      return 'Obesidade Grau I';
     } else {
-      return 'Obesidade';
+      return 'Obesidade Grau II / III';
     }
   }
 
@@ -97,54 +101,66 @@ export default function Form({ isDarkMode }) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={[styles.formContext, dynamicStyles.formContext]}>
-        <View style={styles.form}>
-          <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
-          <TextInput
-            style={[styles.input, dynamicStyles.input]}
-            onChangeText={setHeight}
-            value={height}
-            placeholder="Ex. 1.75 ou 175 cm"
-            placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
-            keyboardType="numeric"
-          />
+        <ScrollView
+          style={styles.scrollView}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.form}>
+            <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}
+              onChangeText={setHeight}
+              value={height}
+              placeholder="Ex. 1.75 ou 175 cm"
+              placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+              keyboardType="numeric"
+            />
 
-          <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
-          <TextInput
-            style={[styles.input, dynamicStyles.input]}
-            onChangeText={setWeight}
-            value={weight}
-            placeholder="Ex. 75.3"
-            placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
-            keyboardType="numeric"
-          />
+            <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
+            <TextInput
+              style={[styles.input, dynamicStyles.input]}
+              onChangeText={setWeight}
+              value={weight}
+              placeholder="Ex. 75.3"
+              placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+              keyboardType="numeric"
+            />
 
-          <TouchableOpacity
-            style={styles.buttonCalculator}
-            onPress={imcCalculator}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.textButtonCalculator}>{textButton}</Text>
-          </TouchableOpacity>
-
-          {imc && (
             <TouchableOpacity
-              style={styles.buttonReset}
-              onPress={handleReset}
-              activeOpacity={0.7}
+              style={styles.buttonCalculator}
+              onPress={imcCalculator}
+              activeOpacity={0.8}
             >
-              <Text style={[styles.textButtonReset, dynamicStyles.resetText]}>
-                Limpar
-              </Text>
+              <Text style={styles.textButtonCalculator}>{textButton}</Text>
             </TouchableOpacity>
-          )}
 
-          <ResultImc
-            messageResultImc={messageImc}
-            resultImc={imc}
-            classification={classification}
-            isDarkMode={isDarkMode}
-          />
-        </View>
+            {imc && (
+              <TouchableOpacity
+                style={styles.buttonReset}
+                onPress={handleReset}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.textButtonReset, dynamicStyles.resetText]}>
+                  Limpar
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            <ResultImc
+              messageResultImc={messageImc}
+              resultImc={imc}
+              classification={classification}
+              isDarkMode={isDarkMode}
+            />
+
+            <TableImc
+              isDarkMode={isDarkMode}
+              currentClassification={classification}
+            />
+          </View>
+        </ScrollView>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -152,14 +168,19 @@ export default function Form({ isDarkMode }) {
 
 const styles = StyleSheet.create({
   formContext: {
-    width: '100%',
-    height: '100%',
-    bottom: 0,
-    alignItems: 'center',
+    flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     marginTop: 10,
+    overflow: 'hidden',
+  },
+  scrollView: {
+    width: '100%',
+  },
+  scrollContent: {
     paddingTop: 30,
+    paddingBottom: 40,
+    alignItems: 'center',
   },
   form: {
     width: '100%',

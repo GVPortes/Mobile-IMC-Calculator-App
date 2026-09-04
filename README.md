@@ -55,8 +55,10 @@ projeto-01/
         │   └── index.js     # Componente de cabeçalho da aplicação
         └── Form/
             ├── index.js     # Formulário, inputs, validações e cálculo
-            └── ResultImc/
-                └── index.js # Exibição do valor calculado e badge de classificação
+            ├── ResultImc/
+            │   └── index.js # Exibição do valor calculado e badge de classificação
+            └── TableImc/
+                └── index.js # Tabela de referência com destaque dinâmico da faixa de IMC
 ```
 
 ### 🧩 Responsabilidades dos Componentes
@@ -65,8 +67,9 @@ projeto-01/
 | :--- | :--- |
 | **`Title`** | Renderiza o título e identidade visual da aplicação. |
 | **`Form`** | Gerencia os estados (`weight`, `height`, `imc`, `classification`), valida as entradas e dispara o cálculo. |
-| **`ResultImc`** | Componente de apresentação puro; recebe via *props* os dados calculados e exibe o resultado formatado. |
-| **`App`** | Ponto de entrada, integrando o tema, barra de status e layout geral. |
+| **`ResultImc`** | Exibe via *props* o resultado numérico e o badge colorido com o diagnóstico. |
+| **`TableImc`** | Exibe as faixas da OMS e destaca automaticamente a faixa do usuário quando calculado. |
+| **`App`** | Ponto de entrada, integrando o tema (Dark/Light), barra de status e layout geral. |
 
 ---
 
