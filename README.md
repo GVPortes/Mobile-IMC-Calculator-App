@@ -35,6 +35,7 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
   - Sobrepeso $(25.0 - 29.9)$
   - Obesidade $(\ge 30.0)$
 - [x] **Validação de Formulário:** Alertas claros caso algum campo esteja vazio ou com valores inválidos.
+- [x] **Tema Escuro (Dark Mode):** Alternância dinâmica entre Modo Claro e Escuro com detecção inicial do tema do sistema operacional (`useColorScheme`).
 - [x] **Experiência do Usuário (UX):**
   - Ocultamento automático do teclado ao tocar fora dos campos (`TouchableWithoutFeedback`).
   - Botão dinâmico para calcular ou resetar os dados.

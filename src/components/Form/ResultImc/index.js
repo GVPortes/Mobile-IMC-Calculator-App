@@ -1,16 +1,47 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function ResultImc({ messageResultImc, resultImc, classification }) {
+export default function ResultImc({
+  messageResultImc,
+  resultImc,
+  classification,
+  isDarkMode,
+}) {
   if (!resultImc) return null;
 
   return (
     <View style={styles.resultContainer}>
-      <Text style={styles.information}>{messageResultImc}</Text>
-      <Text style={styles.numberImc}>{resultImc}</Text>
+      <Text
+        style={[
+          styles.information,
+          { color: isDarkMode ? '#94A3B8' : '#64748B' },
+        ]}
+      >
+        {messageResultImc}
+      </Text>
+      <Text
+        style={[
+          styles.numberImc,
+          { color: isDarkMode ? '#FF3767' : '#FF0043' },
+        ]}
+      >
+        {resultImc}
+      </Text>
       {classification ? (
-        <View style={styles.badge}>
-          <Text style={styles.classificationText}>{classification}</Text>
+        <View
+          style={[
+            styles.badge,
+            { backgroundColor: isDarkMode ? '#3B0715' : '#FFE4E6' },
+          ]}
+        >
+          <Text
+            style={[
+              styles.classificationText,
+              { color: isDarkMode ? '#FDA4AF' : '#E11D48' },
+            ]}
+          >
+            {classification}
+          </Text>
         </View>
       ) : null}
     </View>
@@ -25,17 +56,14 @@ const styles = StyleSheet.create({
   },
   information: {
     fontSize: 16,
-    color: '#64748B',
     fontWeight: 'bold',
   },
   numberImc: {
     fontSize: 42,
-    color: '#FF0043',
     fontWeight: 'bold',
     marginVertical: 6,
   },
   badge: {
-    backgroundColor: '#FFE4E6',
     paddingHorizontal: 16,
     paddingVertical: 6,
     borderRadius: 20,
@@ -43,7 +71,6 @@ const styles = StyleSheet.create({
   },
   classificationText: {
     fontSize: 15,
-    color: '#E11D48',
     fontWeight: 'bold',
   },
 });

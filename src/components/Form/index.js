@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import ResultImc from './ResultImc';
 
-export default function Form() {
+export default function Form({ isDarkMode }) {
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [messageImc, setMessageImc] = useState('Preencha o peso e altura');
@@ -77,27 +77,44 @@ export default function Form() {
     setTextButton('Calcular');
   }
 
+  const dynamicStyles = {
+    formContext: {
+      backgroundColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+    },
+    label: {
+      color: isDarkMode ? '#F8FAFC' : '#0F172A',
+    },
+    input: {
+      backgroundColor: isDarkMode ? '#0F172A' : '#F1F5F9',
+      borderColor: isDarkMode ? '#334155' : '#E2E8F0',
+      color: isDarkMode ? '#F8FAFC' : '#1E293B',
+    },
+    resetText: {
+      color: isDarkMode ? '#94A3B8' : '#64748B',
+    },
+  };
+
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.formContext}>
+      <View style={[styles.formContext, dynamicStyles.formContext]}>
         <View style={styles.form}>
-          <Text style={styles.formLabel}>Altura</Text>
+          <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, dynamicStyles.input]}
             onChangeText={setHeight}
             value={height}
             placeholder="Ex. 1.75 ou 175 cm"
-            placeholderTextColor="#A0AEC0"
+            placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
             keyboardType="numeric"
           />
 
-          <Text style={styles.formLabel}>Peso</Text>
+          <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, dynamicStyles.input]}
             onChangeText={setWeight}
             value={weight}
             placeholder="Ex. 75.3"
-            placeholderTextColor="#A0AEC0"
+            placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
             keyboardType="numeric"
           />
 
@@ -115,7 +132,9 @@ export default function Form() {
               onPress={handleReset}
               activeOpacity={0.7}
             >
-              <Text style={styles.textButtonReset}>Limpar</Text>
+              <Text style={[styles.textButtonReset, dynamicStyles.resetText]}>
+                Limpar
+              </Text>
             </TouchableOpacity>
           )}
 
@@ -123,6 +142,7 @@ export default function Form() {
             messageResultImc={messageImc}
             resultImc={imc}
             classification={classification}
+            isDarkMode={isDarkMode}
           />
         </View>
       </View>
@@ -135,11 +155,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     bottom: 0,
-    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    marginTop: 20,
+    marginTop: 10,
     paddingTop: 30,
   },
   form: {
@@ -147,7 +166,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 25,
   },
   formLabel: {
-    color: '#0F172A',
     fontSize: 16,
     fontWeight: '600',
     paddingLeft: 4,
@@ -157,13 +175,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 48,
     borderRadius: 12,
-    backgroundColor: '#F1F5F9',
     paddingHorizontal: 16,
     fontSize: 16,
-    color: '#1E293B',
     marginBottom: 16,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
   },
   buttonCalculator: {
     borderRadius: 12,
@@ -190,7 +205,6 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   textButtonReset: {
-    color: '#64748B',
     fontSize: 14,
     fontWeight: '600',
   },
