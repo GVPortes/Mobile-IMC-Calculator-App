@@ -42,6 +42,11 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
 - [x] **Medidor Visual e Interativo de IMC (`ImcMeter`):**
   - Barra colorida segmentada (Azul, Verde, Amarelo e Vermelho) com marcações dos limiares da OMS.
   - Ponteiro flutuante com balão indicador animado suavemente com a API `Animated.spring`.
+- [x] **Animações Fluidas e Microinterações (`Animated` API a 60 FPS):**
+  - Entrada suave com *fade-in*, *slide-up* e escala elástica no resultado (`ResultImc`).
+  - Efeito tátil elástico (*scale bounce*) ao pressionar o botão de calcular.
+  - Animação de vibração lateral (*shake effect*) no banner de erro em validações pendentes.
+  - Rotação de 360 graus animada no ícone de alternância de tema (Sol/Lua).
 - [x] **Tema Escuro (Dark Mode):** Alternância dinâmica entre Modo Claro e Escuro com detecção inicial do tema do sistema operacional (`useColorScheme`).
 - [x] **Experiência do Usuário (UX):**
   - Ocultamento automático do teclado ao tocar fora dos campos (`TouchableWithoutFeedback`).

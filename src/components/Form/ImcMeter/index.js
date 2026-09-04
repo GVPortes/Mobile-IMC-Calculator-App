@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Animated } from 'react-native';
 
 export default function ImcMeter({ imc, isDarkMode }) {
   const animatedPosition = useRef(new Animated.Value(0)).current;
+  const containerFade = useRef(new Animated.Value(0)).current;
+  const containerSlide = useRef(new Animated.Value(15)).current;
 
   // Calcula a porcentagem [0, 100] mapeada nos 4 blocos de 25% cada
   const calculatePercentage = (val) => {
@@ -32,12 +34,28 @@ export default function ImcMeter({ imc, isDarkMode }) {
   const targetPercentage = calculatePercentage(imc);
 
   useEffect(() => {
-    Animated.spring(animatedPosition, {
-      toValue: targetPercentage,
-      friction: 6,
-      tension: 40,
-      useNativeDriver: false,
-    }).start();
+    // Animação de entrada do container
+    containerFade.setValue(0);
+    containerSlide.setValue(15);
+
+    Animated.parallel([
+      Animated.timing(containerFade, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.spring(containerSlide, {
+        toValue: 0,
+        friction: 6,
+        useNativeDriver: true,
+      }),
+      Animated.spring(animatedPosition, {
+        toValue: targetPercentage,
+        friction: 5,
+        tension: 35,
+        useNativeDriver: false,
+      }),
+    ]).start();
   }, [targetPercentage]);
 
   const leftInterpolate = animatedPosition.interpolate({
@@ -66,7 +84,16 @@ export default function ImcMeter({ imc, isDarkMode }) {
   };
 
   return (
-    <View style={[styles.container, dynamicStyles.container]}>
+    <Animated.View
+      style={[
+        styles.container,
+        dynamicStyles.container,
+        {
+          opacity: containerFade,
+          transform: [{ translateY: containerSlide }],
+        },
+      ]}
+    >
       <Text style={[styles.title, dynamicStyles.title]}>
         Medidor Visual do IMC
       </Text>
@@ -122,7 +149,7 @@ export default function ImcMeter({ imc, isDarkMode }) {
         <Text style={[styles.thresholdText, dynamicStyles.label]}>25.0</Text>
         <Text style={[styles.thresholdText, dynamicStyles.label]}>30.0</Text>
       </View>
-    </View>
+    </Animated.View>
   );
 }
 

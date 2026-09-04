@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   ScrollView,
   Vibration,
+  Animated,
 } from 'react-native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
@@ -26,6 +27,21 @@ export default function Form({ isDarkMode }) {
   const [errorMessageHeight, setErrorMessageHeight] = useState(null);
   const [errorMessageWeight, setErrorMessageWeight] = useState(null);
   const [generalError, setGeneralError] = useState(null);
+
+  // Animações
+  const scaleButton = useRef(new Animated.Value(1)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
+
+  const triggerShake = () => {
+    shakeAnim.setValue(0);
+    Animated.sequence([
+      Animated.timing(shakeAnim, { toValue: 8, duration: 40, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -8, duration: 40, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 6, duration: 40, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: -6, duration: 40, useNativeDriver: true }),
+      Animated.timing(shakeAnim, { toValue: 0, duration: 40, useNativeDriver: true }),
+    ]).start();
+  };
 
   function calculateImcClassification(imcValue) {
     if (imcValue < 18.5) {
@@ -65,6 +81,7 @@ export default function Form({ isDarkMode }) {
 
     if (hasError) {
       Vibration.vibrate(200);
+      triggerShake();
       setGeneralError('Por favor, preencha os campos obrigatórios.');
       setImc(null);
       setClassification('');
@@ -78,6 +95,7 @@ export default function Form({ isDarkMode }) {
 
     if (isNaN(numWeight) || isNaN(numHeight) || numWeight <= 0 || numHeight <= 0) {
       Vibration.vibrate(200);
+      triggerShake();
       setGeneralError('Insira valores numéricos válidos maiores que zero.');
       setImc(null);
       return;
@@ -205,24 +223,51 @@ export default function Form({ isDarkMode }) {
               />
             </View>
 
-            {/* Alerta Estilizado Geral */}
+            {/* Alerta Estilizado com Animação Shake */}
             {generalError && (
-              <View style={[styles.errorBanner, dynamicStyles.bannerError]}>
+              <Animated.View
+                style={[
+                  styles.errorBanner,
+                  dynamicStyles.bannerError,
+                  { transform: [{ translateX: shakeAnim }] },
+                ]}
+              >
                 <Text style={styles.errorBannerIcon}>⚠️</Text>
                 <Text style={[styles.errorBannerText, dynamicStyles.bannerText]}>
                   {generalError}
                 </Text>
-              </View>
+              </Animated.View>
             )}
 
-            {/* Botão de Ação */}
-            <TouchableOpacity
-              style={styles.buttonCalculator}
-              onPress={imcCalculator}
-              activeOpacity={0.8}
+            {/* Botão de Ação com Microinteração Tátil (Scale Bounce) */}
+            <Animated.View
+              style={{
+                transform: [{ scale: scaleButton }],
+                width: '100%',
+              }}
             >
-              <Text style={styles.textButtonCalculator}>{textButton}</Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonCalculator}
+                onPress={imcCalculator}
+                onPressIn={() =>
+                  Animated.spring(scaleButton, {
+                    toValue: 0.95,
+                    useNativeDriver: true,
+                  }).start()
+                }
+                onPressOut={() =>
+                  Animated.spring(scaleButton, {
+                    toValue: 1,
+                    friction: 4,
+                    tension: 40,
+                    useNativeDriver: true,
+                  }).start()
+                }
+                activeOpacity={0.9}
+              >
+                <Text style={styles.textButtonCalculator}>{textButton}</Text>
+              </TouchableOpacity>
+            </Animated.View>
 
             {/* Botão de Limpar */}
             {(imc || weight || height || generalError) && (
@@ -237,7 +282,7 @@ export default function Form({ isDarkMode }) {
               </TouchableOpacity>
             )}
 
-            {/* Resultado */}
+            {/* Resultado com Animação Fluida */}
             <ResultImc
               messageResultImc={messageImc}
               resultImc={imc}

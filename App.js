@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   StyleSheet,
   View,
   SafeAreaView,
   TouchableOpacity,
   Text,
+  Animated,
   useColorScheme,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
@@ -14,10 +15,24 @@ import Form from './src/components/Form';
 export default function App() {
   const systemTheme = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(systemTheme === 'dark');
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   const toggleTheme = () => {
+    // Animação de rotação suave no ícone do tema
+    rotateAnim.setValue(0);
+    Animated.timing(rotateAnim, {
+      toValue: 1,
+      duration: 350,
+      useNativeDriver: true,
+    }).start();
+
     setIsDarkMode((prev) => !prev);
   };
+
+  const spin = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
   return (
     <SafeAreaView
@@ -42,7 +57,11 @@ export default function App() {
           onPress={toggleTheme}
           activeOpacity={0.8}
         >
-          <Text style={styles.themeIcon}>{isDarkMode ? '☀️' : '🌙'}</Text>
+          <Animated.Text
+            style={[styles.themeIcon, { transform: [{ rotate: spin }] }]}
+          >
+            {isDarkMode ? '☀️' : '🌙'}
+          </Animated.Text>
           <Text
             style={[
               styles.themeText,

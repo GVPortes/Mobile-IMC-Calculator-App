@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, StyleSheet, Animated } from 'react-native';
 
 export default function ResultImc({
   messageResultImc,
@@ -7,10 +7,52 @@ export default function ResultImc({
   classification,
   isDarkMode,
 }) {
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(20)).current;
+  const scaleAnim = useRef(new Animated.Value(0.92)).current;
+
+  useEffect(() => {
+    if (resultImc) {
+      // Reinicia os valores para cada novo cálculo
+      fadeAnim.setValue(0);
+      slideAnim.setValue(20);
+      scaleAnim.setValue(0.92);
+
+      // Dispara a animação combinada fluida a 60 FPS
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 350,
+          useNativeDriver: true,
+        }),
+        Animated.spring(slideAnim, {
+          toValue: 0,
+          friction: 6,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnim, {
+          toValue: 1,
+          friction: 6,
+          tension: 40,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
+  }, [resultImc]);
+
   if (!resultImc) return null;
 
   return (
-    <View style={styles.resultContainer}>
+    <Animated.View
+      style={[
+        styles.resultContainer,
+        {
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+        },
+      ]}
+    >
       <Text
         style={[
           styles.information,
@@ -44,7 +86,7 @@ export default function ResultImc({
           </Text>
         </View>
       ) : null}
-    </View>
+    </Animated.View>
   );
 }
 
@@ -59,9 +101,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   numberImc: {
-    fontSize: 42,
-    fontWeight: 'bold',
-    marginVertical: 6,
+    fontSize: 44,
+    fontWeight: '800',
+    marginVertical: 4,
   },
   badge: {
     paddingHorizontal: 16,
