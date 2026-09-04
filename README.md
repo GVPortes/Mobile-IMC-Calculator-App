@@ -39,6 +39,9 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
   - Alerta estilizado no layout com ícone sem popups intrusivos.
   - Vibração tátil do aparelho (`Vibration.vibrate`) em caso de erro.
   - Limpeza automática dos erros conforme o usuário digita.
+- [x] **Medidor Visual e Interativo de IMC (`ImcMeter`):**
+  - Barra colorida segmentada (Azul, Verde, Amarelo e Vermelho) com marcações dos limiares da OMS.
+  - Ponteiro flutuante com balão indicador animado suavemente com a API `Animated.spring`.
 - [x] **Tema Escuro (Dark Mode):** Alternância dinâmica entre Modo Claro e Escuro com detecção inicial do tema do sistema operacional (`useColorScheme`).
 - [x] **Experiência do Usuário (UX):**
   - Ocultamento automático do teclado ao tocar fora dos campos (`TouchableWithoutFeedback`).
@@ -61,6 +64,8 @@ projeto-01/
             ├── index.js     # Formulário, inputs, validações e cálculo
             ├── ResultImc/
             │   └── index.js # Exibição do valor calculado e badge de classificação
+            ├── ImcMeter/
+            │   └── index.js # Medidor gráfico com barra colorida e ponteiro animado
             └── TableImc/
                 └── index.js # Tabela de referência com destaque dinâmico da faixa de IMC
 ```
@@ -72,6 +77,7 @@ projeto-01/
 | **`Title`** | Renderiza o título e identidade visual da aplicação. |
 | **`Form`** | Gerencia os estados (`weight`, `height`, `imc`, `classification`), valida as entradas e dispara o cálculo. |
 | **`ResultImc`** | Exibe via *props* o resultado numérico e o badge colorido com o diagnóstico. |
+| **`ImcMeter`** | Renderiza a escala gráfica de cores e anima o ponteiro até a posição exata do IMC. |
 | **`TableImc`** | Exibe as faixas da OMS e destaca automaticamente a faixa do usuário quando calculado. |
 | **`App`** | Ponto de entrada, integrando o tema (Dark/Light), barra de status e layout geral. |
 

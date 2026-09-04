@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
+import ImcMeter from './ImcMeter';
 
 export default function Form({ isDarkMode }) {
   const [weight, setWeight] = useState('');
@@ -243,6 +244,14 @@ export default function Form({ isDarkMode }) {
               classification={classification}
               isDarkMode={isDarkMode}
             />
+
+            {/* Medidor Visual do IMC */}
+            {imc && (
+              <ImcMeter
+                imc={imc}
+                isDarkMode={isDarkMode}
+              />
+            )}
 
             {/* Tabela de Referência */}
             <TableImc
