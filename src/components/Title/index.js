@@ -1,30 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Container, TitleText } from './styles';
 
-export default function Title({ isDarkMode }) {
+export default function Title() {
   return (
-    <View style={styles.boxTitle}>
-      <Text
-        style={[
-          styles.textTitle,
-          { color: isDarkMode ? '#FF3767' : '#FF0043' },
-        ]}
-      >
-        CALCULADORA IMC
-      </Text>
-    </View>
+    <Container>
+      <TitleText>CALCULADORA IMC</TitleText>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  boxTitle: {
-    alignItems: 'flex-start',
-    justifyContent: 'center',
-    paddingVertical: 10,
-  },
-  textTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    letterSpacing: 0.5,
-  },
-});

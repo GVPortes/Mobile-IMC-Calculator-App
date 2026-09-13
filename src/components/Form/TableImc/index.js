@@ -1,7 +1,13 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import {
+  TableContainer,
+  TableTitle,
+  TableRow,
+  TableLabel,
+  TableValue,
+} from './styles';
 
-export default function TableImc({ isDarkMode, currentClassification }) {
+export default function TableImc({ currentClassification }) {
   const tableData = [
     {
       range: 'Menor que 18,5',
@@ -30,27 +36,9 @@ export default function TableImc({ isDarkMode, currentClassification }) {
     },
   ];
 
-  const dynamicStyles = {
-    container: {
-      backgroundColor: isDarkMode ? '#0F172A' : '#F8FAFC',
-      borderColor: isDarkMode ? '#334155' : '#E2E8F0',
-    },
-    title: {
-      color: isDarkMode ? '#F8FAFC' : '#1E293B',
-    },
-    borderRow: {
-      borderBottomColor: isDarkMode ? '#1E293B' : '#E2E8F0',
-    },
-    label: {
-      color: isDarkMode ? '#94A3B8' : '#64748B',
-    },
-  };
-
   return (
-    <View style={[styles.tableContainer, dynamicStyles.container]}>
-      <Text style={[styles.tableTitle, dynamicStyles.title]}>
-        Tabela de Classificação
-      </Text>
+    <TableContainer>
+      <TableTitle>Tabela de Classificação</TableTitle>
 
       {tableData.map((item, index) => {
         const isSelected =
@@ -60,69 +48,20 @@ export default function TableImc({ isDarkMode, currentClassification }) {
               item.classification.startsWith('Obesidade')));
 
         return (
-          <View
+          <TableRow
             key={index}
-            style={[
-              styles.tableRow,
-              dynamicStyles.borderRow,
-              index === tableData.length - 1 && styles.lastRow,
-              isSelected && {
-                backgroundColor: isDarkMode ? '#1E293B' : '#EDF2F7',
-                borderRadius: 8,
-                paddingHorizontal: 8,
-              },
-            ]}
+            isLast={index === tableData.length - 1}
+            isSelected={isSelected}
           >
-            <Text
-              style={[
-                styles.tableLabel,
-                dynamicStyles.label,
-                isSelected && { fontWeight: '700' },
-              ]}
-            >
+            <TableLabel isSelected={isSelected}>
               {isSelected ? `👉 ${item.range}` : item.range}
-            </Text>
-            <Text style={[styles.tableValue, { color: item.color }]}>
+            </TableLabel>
+            <TableValue color={item.color}>
               {item.classification}
-            </Text>
-          </View>
+            </TableValue>
+          </TableRow>
         );
       })}
-    </View>
+    </TableContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  tableContainer: {
-    width: '100%',
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 24,
-    marginBottom: 30,
-    borderWidth: 1,
-  },
-  tableTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 9,
-    borderBottomWidth: 1,
-  },
-  lastRow: {
-    borderBottomWidth: 0,
-    paddingBottom: 2,
-  },
-  tableLabel: {
-    fontSize: 13,
-    fontWeight: '500',
-  },
-  tableValue: {
-    fontSize: 13,
-    fontWeight: '700',
-  },
-});

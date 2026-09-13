@@ -1,11 +1,17 @@
 import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { Animated } from 'react-native';
+import {
+  ResultContainer,
+  InformationText,
+  NumberImcText,
+  ClassificationBadge,
+  ClassificationText,
+} from './styles';
 
 export default function ResultImc({
   messageResultImc,
   resultImc,
   classification,
-  isDarkMode,
 }) {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(20)).current;
@@ -44,75 +50,19 @@ export default function ResultImc({
   if (!resultImc) return null;
 
   return (
-    <Animated.View
-      style={[
-        styles.resultContainer,
-        {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
-        },
-      ]}
+    <ResultContainer
+      style={{
+        opacity: fadeAnim,
+        transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+      }}
     >
-      <Text
-        style={[
-          styles.information,
-          { color: isDarkMode ? '#94A3B8' : '#64748B' },
-        ]}
-      >
-        {messageResultImc}
-      </Text>
-      <Text
-        style={[
-          styles.numberImc,
-          { color: isDarkMode ? '#FF3767' : '#FF0043' },
-        ]}
-      >
-        {resultImc}
-      </Text>
+      <InformationText>{messageResultImc}</InformationText>
+      <NumberImcText>{resultImc}</NumberImcText>
       {classification ? (
-        <View
-          style={[
-            styles.badge,
-            { backgroundColor: isDarkMode ? '#3B0715' : '#FFE4E6' },
-          ]}
-        >
-          <Text
-            style={[
-              styles.classificationText,
-              { color: isDarkMode ? '#FDA4AF' : '#E11D48' },
-            ]}
-          >
-            {classification}
-          </Text>
-        </View>
+        <ClassificationBadge>
+          <ClassificationText>{classification}</ClassificationText>
+        </ClassificationBadge>
       ) : null}
-    </Animated.View>
+    </ResultContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  resultContainer: {
-    marginTop: 20,
-    alignItems: 'center',
-    width: '100%',
-  },
-  information: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  numberImc: {
-    fontSize: 44,
-    fontWeight: '800',
-    marginVertical: 4,
-  },
-  badge: {
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    borderRadius: 20,
-    marginTop: 4,
-  },
-  classificationText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-  },
-});

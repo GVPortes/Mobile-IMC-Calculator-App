@@ -1,21 +1,35 @@
 import React, { useState, useRef } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
   Keyboard,
   TouchableWithoutFeedback,
-  ScrollView,
   Vibration,
   Animated,
 } from 'react-native';
+import { useTheme } from 'styled-components/native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
 import ImcMeter from './ImcMeter';
+import {
+  FormContext,
+  FormScrollView,
+  FormContainer,
+  FieldGroup,
+  LabelRow,
+  FormLabel,
+  ErrorMessage,
+  StyledInput,
+  ErrorBanner,
+  ErrorBannerIcon,
+  ErrorBannerText,
+  ButtonCalculatorWrapper,
+  ButtonCalculator,
+  TextButtonCalculator,
+  ButtonReset,
+  TextButtonReset,
+} from './styles';
 
-export default function Form({ isDarkMode }) {
+export default function Form() {
+  const theme = useTheme();
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
   const [messageImc, setMessageImc] = useState('Preencha o peso e altura');
@@ -132,59 +146,21 @@ export default function Form({ isDarkMode }) {
     setGeneralError(null);
   }
 
-  const dynamicStyles = {
-    formContext: {
-      backgroundColor: isDarkMode ? '#1E293B' : '#FFFFFF',
-    },
-    label: {
-      color: isDarkMode ? '#F8FAFC' : '#0F172A',
-    },
-    input: {
-      backgroundColor: isDarkMode ? '#0F172A' : '#F1F5F9',
-      borderColor: isDarkMode ? '#334155' : '#E2E8F0',
-      color: isDarkMode ? '#F8FAFC' : '#1E293B',
-    },
-    inputError: {
-      borderColor: '#EF4444',
-      borderWidth: 1.5,
-      backgroundColor: isDarkMode ? '#281318' : '#FFF5F5',
-    },
-    bannerError: {
-      backgroundColor: isDarkMode ? '#3B1219' : '#FEE2E2',
-      borderColor: isDarkMode ? '#881337' : '#FCA5A5',
-    },
-    bannerText: {
-      color: isDarkMode ? '#FECDD3' : '#B91C1C',
-    },
-    resetText: {
-      color: isDarkMode ? '#94A3B8' : '#64748B',
-    },
-  };
-
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={[styles.formContext, dynamicStyles.formContext]}>
-        <ScrollView
-          style={styles.scrollView}
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.form}>
+      <FormContext>
+        <FormScrollView>
+          <FormContainer>
             {/* Campo Altura */}
-            <View style={styles.fieldGroup}>
-              <View style={styles.labelRow}>
-                <Text style={[styles.formLabel, dynamicStyles.label]}>Altura</Text>
+            <FieldGroup>
+              <LabelRow>
+                <FormLabel>Altura</FormLabel>
                 {errorMessageHeight && (
-                  <Text style={styles.errorMessage}>{errorMessageHeight}</Text>
+                  <ErrorMessage>{errorMessageHeight}</ErrorMessage>
                 )}
-              </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  dynamicStyles.input,
-                  errorMessageHeight && dynamicStyles.inputError,
-                ]}
+              </LabelRow>
+              <StyledInput
+                hasError={!!errorMessageHeight}
                 onChangeText={(text) => {
                   setHeight(text);
                   if (errorMessageHeight) setErrorMessageHeight(null);
@@ -192,25 +168,21 @@ export default function Form({ isDarkMode }) {
                 }}
                 value={height}
                 placeholder="Ex. 1.75 ou 175 cm"
-                placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+                placeholderTextColor={theme.colors.placeholder}
                 keyboardType="numeric"
               />
-            </View>
+            </FieldGroup>
 
             {/* Campo Peso */}
-            <View style={styles.fieldGroup}>
-              <View style={styles.labelRow}>
-                <Text style={[styles.formLabel, dynamicStyles.label]}>Peso</Text>
+            <FieldGroup>
+              <LabelRow>
+                <FormLabel>Peso</FormLabel>
                 {errorMessageWeight && (
-                  <Text style={styles.errorMessage}>{errorMessageWeight}</Text>
+                  <ErrorMessage>{errorMessageWeight}</ErrorMessage>
                 )}
-              </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  dynamicStyles.input,
-                  errorMessageWeight && dynamicStyles.inputError,
-                ]}
+              </LabelRow>
+              <StyledInput
+                hasError={!!errorMessageWeight}
                 onChangeText={(text) => {
                   setWeight(text);
                   if (errorMessageWeight) setErrorMessageWeight(null);
@@ -218,36 +190,22 @@ export default function Form({ isDarkMode }) {
                 }}
                 value={weight}
                 placeholder="Ex. 75.3"
-                placeholderTextColor={isDarkMode ? '#64748B' : '#A0AEC0'}
+                placeholderTextColor={theme.colors.placeholder}
                 keyboardType="numeric"
               />
-            </View>
+            </FieldGroup>
 
             {/* Alerta Estilizado com Animação Shake */}
             {generalError && (
-              <Animated.View
-                style={[
-                  styles.errorBanner,
-                  dynamicStyles.bannerError,
-                  { transform: [{ translateX: shakeAnim }] },
-                ]}
-              >
-                <Text style={styles.errorBannerIcon}>⚠️</Text>
-                <Text style={[styles.errorBannerText, dynamicStyles.bannerText]}>
-                  {generalError}
-                </Text>
-              </Animated.View>
+              <ErrorBanner style={{ transform: [{ translateX: shakeAnim }] }}>
+                <ErrorBannerIcon>⚠️</ErrorBannerIcon>
+                <ErrorBannerText>{generalError}</ErrorBannerText>
+              </ErrorBanner>
             )}
 
             {/* Botão de Ação com Microinteração Tátil (Scale Bounce) */}
-            <Animated.View
-              style={{
-                transform: [{ scale: scaleButton }],
-                width: '100%',
-              }}
-            >
-              <TouchableOpacity
-                style={styles.buttonCalculator}
+            <ButtonCalculatorWrapper style={{ transform: [{ scale: scaleButton }] }}>
+              <ButtonCalculator
                 onPress={imcCalculator}
                 onPressIn={() =>
                   Animated.spring(scaleButton, {
@@ -265,21 +223,15 @@ export default function Form({ isDarkMode }) {
                 }
                 activeOpacity={0.9}
               >
-                <Text style={styles.textButtonCalculator}>{textButton}</Text>
-              </TouchableOpacity>
-            </Animated.View>
+                <TextButtonCalculator>{textButton}</TextButtonCalculator>
+              </ButtonCalculator>
+            </ButtonCalculatorWrapper>
 
             {/* Botão de Limpar */}
             {(imc || weight || height || generalError) && (
-              <TouchableOpacity
-                style={styles.buttonReset}
-                onPress={handleReset}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.textButtonReset, dynamicStyles.resetText]}>
-                  Limpar
-                </Text>
-              </TouchableOpacity>
+              <ButtonReset onPress={handleReset} activeOpacity={0.7}>
+                <TextButtonReset>Limpar</TextButtonReset>
+              </ButtonReset>
             )}
 
             {/* Resultado com Animação Fluida */}
@@ -287,120 +239,16 @@ export default function Form({ isDarkMode }) {
               messageResultImc={messageImc}
               resultImc={imc}
               classification={classification}
-              isDarkMode={isDarkMode}
             />
 
             {/* Medidor Visual do IMC */}
-            {imc && (
-              <ImcMeter
-                imc={imc}
-                isDarkMode={isDarkMode}
-              />
-            )}
+            {imc && <ImcMeter imc={imc} />}
 
             {/* Tabela de Referência */}
-            <TableImc
-              isDarkMode={isDarkMode}
-              currentClassification={classification}
-            />
-          </View>
-        </ScrollView>
-      </View>
+            <TableImc currentClassification={classification} />
+          </FormContainer>
+        </FormScrollView>
+      </FormContext>
     </TouchableWithoutFeedback>
   );
 }
-
-const styles = StyleSheet.create({
-  formContext: {
-    flex: 1,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    marginTop: 10,
-    overflow: 'hidden',
-  },
-  scrollView: {
-    width: '100%',
-  },
-  scrollContent: {
-    paddingTop: 30,
-    paddingBottom: 40,
-    alignItems: 'center',
-  },
-  form: {
-    width: '100%',
-    paddingHorizontal: 25,
-  },
-  fieldGroup: {
-    marginBottom: 16,
-  },
-  labelRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 6,
-    paddingHorizontal: 4,
-  },
-  formLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  errorMessage: {
-    fontSize: 12,
-    color: '#EF4444',
-    fontWeight: '700',
-  },
-  input: {
-    width: '100%',
-    height: 48,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    fontSize: 16,
-    borderWidth: 1,
-  },
-  errorBanner: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
-    borderRadius: 12,
-    marginBottom: 14,
-    borderWidth: 1,
-  },
-  errorBannerIcon: {
-    fontSize: 16,
-    marginRight: 8,
-  },
-  errorBannerText: {
-    fontSize: 13,
-    fontWeight: '600',
-    flex: 1,
-  },
-  buttonCalculator: {
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    backgroundColor: '#FF0043',
-    paddingVertical: 14,
-    marginTop: 4,
-    shadowColor: '#FF0043',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 4,
-  },
-  textButtonCalculator: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
-  },
-  buttonReset: {
-    alignItems: 'center',
-    paddingVertical: 10,
-    marginTop: 6,
-  },
-  textButtonReset: {
-    fontSize: 14,
-    fontWeight: '600',
-  },
-});
