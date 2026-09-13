@@ -4,11 +4,12 @@
 
 [![React Native](https://img.shields.io/badge/React_Native-0.86-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://reactnative.dev/)
 [![Expo](https://img.shields.io/badge/Expo-57.0-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![styled-components](https://img.shields.io/badge/styled--components-6.5-DB7093?style=for-the-badge&logo=styled-components&logoColor=white)](https://styled-components.com/)
 [![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)](https://developer.mozilla.org/pt-BR/docs/Web/JavaScript)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
 
 <p align="center">
-  Um aplicativo mobile moderno e intuitivo para cálculo do <b>Índice de Massa Corporal (IMC)</b>, desenvolvido em <b>React Native</b> com <b>Expo</b>, seguindo boas práticas de componentização e arquitetura modular.
+  Um aplicativo mobile moderno e intuitivo para cálculo do <b>Índice de Massa Corporal (IMC)</b>, desenvolvido em <b>React Native</b> com <b>Expo</b>, seguindo boas práticas de componentização, arquitetura modular e estilização com <b>styled-components</b>.
 </p>
 
 </div>
@@ -19,7 +20,7 @@
 
 O aplicativo foi desenvolvido com foco em simplicidade, usabilidade e organização de código. Permite ao usuário inserir seu peso e altura para calcular o IMC instantaneamente, recebendo a classificação correspondente de acordo com as diretrizes da Organização Mundial da Saúde (OMS).
 
-Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia de Software**, demonstrando conceitos essenciais como gerenciamento de estados (`useState`), validação e sanitização de dados, comunicação entre componentes via *props* e estilização nativa com `StyleSheet`.
+Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia de Software**, demonstrando conceitos essenciais como gerenciamento de estados (`useState`, `useRef`), validação e sanitização de dados, animações fluidas nativas a 60 FPS, comunicação entre componentes via *props* e estilização desacoplada com **`styled-components`** e temas dinâmicos (**`ThemeProvider`**).
 
 ---
 
@@ -47,7 +48,12 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
   - Efeito tátil elástico (*scale bounce*) ao pressionar o botão de calcular.
   - Animação de vibração lateral (*shake effect*) no banner de erro em validações pendentes.
   - Rotação de 360 graus animada no ícone de alternância de tema (Sol/Lua).
-- [x] **Tema Escuro (Dark Mode):** Alternância dinâmica entre Modo Claro e Escuro com detecção inicial do tema do sistema operacional (`useColorScheme`).
+- [x] **Tema Escuro e Claro (Dark / Light Mode):**
+  - Suporte completo a temas com troca dinâmica via `ThemeProvider`.
+  - Detecção inicial automática do tema do sistema operacional (`useColorScheme`).
+- [x] **Design System e Estilização Desacoplada (`styled-components`):**
+  - Definição centralizada de paleta de cores, espaçamentos e variantes de tema em `src/theme/`.
+  - Separação clara de responsabilidades: cada componente possui seu próprio arquivo `styles.js`.
 - [x] **Experiência do Usuário (UX):**
   - Ocultamento automático do teclado ao tocar fora dos campos (`TouchableWithoutFeedback`).
   - Botão dinâmico para calcular ou resetar os dados.
@@ -56,35 +62,45 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
 
 ## 🏗️ Arquitetura e Componentização
 
-O projeto adota uma estrutura modular e desacoplada, separando responsabilidades em componentes reutilizáveis:
+O projeto adota uma estrutura modular e desacoplada, separando responsabilidades de lógica, temas e estilos em módulos reutilizáveis:
 
 ```text
 projeto-01/
-├── App.js                   # Container principal (SafeAreaView e StatusBar)
+├── App.js                   # Container principal, controle de tema e ThemeProvider
 └── src/
+    ├── theme/
+    │   └── index.js         # Tokens de design e paletas (lightTheme e darkTheme)
+    ├── styles/
+    │   └── app.styles.js    # Estilos globais e cabeçalho de topo
     └── components/
         ├── Title/
-        │   └── index.js     # Componente de cabeçalho da aplicação
+        │   ├── index.js     # Componente de cabeçalho da aplicação
+        │   └── styles.js    # Estilos desacoplados do cabeçalho
         └── Form/
             ├── index.js     # Formulário, inputs, validações e cálculo
+            ├── styles.js    # Estilos desacoplados do formulário e botões
             ├── ResultImc/
-            │   └── index.js # Exibição do valor calculado e badge de classificação
+            │   ├── index.js # Exibição do valor calculado e badge de classificação
+            │   └── styles.js# Estilos desacoplados do resultado
             ├── ImcMeter/
-            │   └── index.js # Medidor gráfico com barra colorida e ponteiro animado
+            │   ├── index.js # Medidor gráfico com barra colorida e ponteiro animado
+            │   └── styles.js# Estilos desacoplados do medidor e indicador
             └── TableImc/
-                └── index.js # Tabela de referência com destaque dinâmico da faixa de IMC
+                ├── index.js # Tabela de referência com destaque dinâmico da faixa
+                └── styles.js# Estilos desacoplados da tabela e linhas de destaque
 ```
 
-### 🧩 Responsabilidades dos Componentes
+### 🧩 Responsabilidades dos Componentes e Módulos
 
-| Componente | Responsabilidade |
+| Módulo / Componente | Responsabilidade |
 | :--- | :--- |
-| **`Title`** | Renderiza o título e identidade visual da aplicação. |
+| **`theme/`** | Centraliza paletas de cores, bordas e estados para os modos claro e escuro. |
+| **`Title`** | Renderiza o título e a identidade visual da aplicação. |
 | **`Form`** | Gerencia os estados (`weight`, `height`, `imc`, `classification`), valida as entradas e dispara o cálculo. |
 | **`ResultImc`** | Exibe via *props* o resultado numérico e o badge colorido com o diagnóstico. |
 | **`ImcMeter`** | Renderiza a escala gráfica de cores e anima o ponteiro até a posição exata do IMC. |
 | **`TableImc`** | Exibe as faixas da OMS e destaca automaticamente a faixa do usuário quando calculado. |
-| **`App`** | Ponto de entrada, integrando o tema (Dark/Light), barra de status e layout geral. |
+| **`App`** | Ponto de entrada, integrando o `ThemeProvider`, alternância de tema, barra de status e layout geral. |
 
 ---
 
@@ -103,9 +119,10 @@ projeto-01/
 ## 🛠️ Tecnologias Utilizadas
 
 - **[React Native](https://reactnative.dev/)** — Framework de desenvolvimento mobile cross-platform.
-- **[Expo](https://expo.dev/)** — Plataforma e conjunto de ferramentas para ecossistema React Native.
-- **[React Hooks](https://react.dev/)** — Gerenciamento de ciclo de vida e estado com `useState`.
-- **JavaScript (ES6+)** — Sintaxe moderna.
+- **[Expo](https://expo.dev/)** — Plataforma e conjunto de ferramentas para o ecossistema React Native.
+- **[styled-components](https://styled-components.com/)** — Estilização modular via CSS-in-JS com suporte nativo a temas (`ThemeProvider`).
+- **[React Hooks](https://react.dev/)** — Gerenciamento de ciclo de vida e estado com `useState`, `useRef` e `useColorScheme`.
+- **JavaScript (ES6+)** — Sintaxe moderna e modular.
 
 ---
 
