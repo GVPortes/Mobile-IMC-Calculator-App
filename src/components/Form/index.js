@@ -9,6 +9,10 @@ import { useTheme } from 'styled-components/native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
 import ImcMeter from './ImcMeter';
+import HistoryImc from './HistoryImc';
+import Storage from '../../db/storage';
+
+const storage = new Storage();
 import {
   FormContext,
   FormScrollView,
@@ -132,6 +136,12 @@ export default function Form() {
     setClassification(calculateImcClassification(calculatedImc));
     setMessageImc('Seu IMC é igual a:');
     setTextButton('Calcular Novamente');
+
+    console.log('IMC calculado:', formattedImc);
+    // Salva o cálculo no banco Firestore
+    storage.add({
+      resultado: formattedImc,
+    });
   }
 
   function handleReset() {
@@ -246,6 +256,9 @@ export default function Form() {
 
             {/* Tabela de Referência */}
             <TableImc currentClassification={classification} />
+
+            {/* Histórico do Firebase */}
+            <HistoryImc />
           </FormContainer>
         </FormScrollView>
       </FormContext>

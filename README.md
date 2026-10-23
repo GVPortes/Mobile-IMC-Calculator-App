@@ -68,6 +68,9 @@ O projeto adota uma estrutura modular e desacoplada, separando responsabilidades
 projeto-01/
 ├── App.js                   # Container principal, controle de tema e ThemeProvider
 └── src/
+    ├── db/
+    │   ├── firebase.js      # Configuração e inicialização do Firebase
+    │   └── storage.js       # Operações de CRUD no Firestore (coleção imc)
     ├── theme/
     │   └── index.js         # Tokens de design e paletas (lightTheme e darkTheme)
     ├── styles/
@@ -77,7 +80,7 @@ projeto-01/
         │   ├── index.js     # Componente de cabeçalho da aplicação
         │   └── styles.js    # Estilos desacoplados do cabeçalho
         └── Form/
-            ├── index.js     # Formulário, inputs, validações e cálculo
+            ├── index.js     # Formulário, inputs, validações, cálculo e integração
             ├── styles.js    # Estilos desacoplados do formulário e botões
             ├── ResultImc/
             │   ├── index.js # Exibição do valor calculado e badge de classificação
@@ -85,9 +88,12 @@ projeto-01/
             ├── ImcMeter/
             │   ├── index.js # Medidor gráfico com barra colorida e ponteiro animado
             │   └── styles.js# Estilos desacoplados do medidor e indicador
-            └── TableImc/
-                ├── index.js # Tabela de referência com destaque dinâmico da faixa
-                └── styles.js# Estilos desacoplados da tabela e linhas de destaque
+            ├── TableImc/
+            │   ├── index.js # Tabela de referência com destaque dinâmico da faixa
+            │   └── styles.js# Estilos desacoplados da tabela e linhas de destaque
+            └── HistoryImc/
+                ├── index.js # Histórico de cálculos em tempo real via Firestore
+                └── styles.js# Estilos do histórico com badges e botão de exclusão
 ```
 
 ### 🧩 Responsabilidades dos Componentes e Módulos
@@ -95,11 +101,14 @@ projeto-01/
 | Módulo / Componente | Responsabilidade |
 | :--- | :--- |
 | **`theme/`** | Centraliza paletas de cores, bordas e estados para os modos claro e escuro. |
+| **`db/firebase.js`** | Inicialização do SDK do Firebase conectado ao projeto. |
+| **`db/storage.js`** | Camada de dados para listar, salvar e excluir cálculos no Firestore. |
 | **`Title`** | Renderiza o título e a identidade visual da aplicação. |
-| **`Form`** | Gerencia os estados (`weight`, `height`, `imc`, `classification`), valida as entradas e dispara o cálculo. |
+| **`Form`** | Gerencia os estados (`weight`, `height`, `imc`), validações, cálculo e disparo da gravação. |
 | **`ResultImc`** | Exibe via *props* o resultado numérico e o badge colorido com o diagnóstico. |
 | **`ImcMeter`** | Renderiza a escala gráfica de cores e anima o ponteiro até a posição exata do IMC. |
 | **`TableImc`** | Exibe as faixas da OMS e destaca automaticamente a faixa do usuário quando calculado. |
+| **`HistoryImc`** | Lista o histórico de resultados e datas sincronizados em tempo real com o Firebase. |
 | **`App`** | Ponto de entrada, integrando o `ThemeProvider`, alternância de tema, barra de status e layout geral. |
 
 ---
@@ -120,8 +129,9 @@ projeto-01/
 
 - **[React Native](https://reactnative.dev/)** — Framework de desenvolvimento mobile cross-platform.
 - **[Expo](https://expo.dev/)** — Plataforma e conjunto de ferramentas para o ecossistema React Native.
+- **[Firebase / Firestore](https://firebase.google.com/)** — Banco de dados NoSQL em nuvem para persistência do histórico em tempo real.
 - **[styled-components](https://styled-components.com/)** — Estilização modular via CSS-in-JS com suporte nativo a temas (`ThemeProvider`).
-- **[React Hooks](https://react.dev/)** — Gerenciamento de ciclo de vida e estado com `useState`, `useRef` e `useColorScheme`.
+- **[React Hooks](https://react.dev/)** — Gerenciamento de ciclo de vida e estado com `useState`, `useEffect`, `useRef` e `useColorScheme`.
 - **JavaScript (ES6+)** — Sintaxe moderna e modular.
 
 ---
