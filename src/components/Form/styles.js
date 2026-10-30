@@ -65,6 +65,36 @@ export const StyledInput = styled.TextInput`
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
+export const SexOptions = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const SexOption = styled.TouchableOpacity`
+  width: 48%;
+  height: 48px;
+  border-radius: 12px;
+  align-items: center;
+  justify-content: center;
+  border-width: ${({ hasError, isSelected }) =>
+    hasError || isSelected ? '1.5px' : '1px'};
+  border-color: ${({ hasError, isSelected, theme }) => {
+    if (hasError) return theme.colors.error;
+    return isSelected ? theme.colors.primary : theme.colors.inputBorder;
+  }};
+  background-color: ${({ hasError, isSelected, theme }) => {
+    if (hasError) return theme.colors.inputErrorBg;
+    return isSelected ? theme.colors.primaryBadgeBg : theme.colors.inputBg;
+  }};
+`;
+
+export const SexOptionText = styled.Text`
+  font-size: 16px;
+  font-weight: 600;
+  color: ${({ isSelected, theme }) =>
+    isSelected ? theme.colors.primaryBadgeText : theme.colors.textSecondary};
+`;
+
 export const ErrorBanner = styled(Animated.View)`
   flex-direction: row;
   align-items: center;

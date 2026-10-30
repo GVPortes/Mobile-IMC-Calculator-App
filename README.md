@@ -35,6 +35,9 @@ Este projeto faz parte do portfólio de desenvolvimento mobile em **Engenharia d
   - Peso normal $(18.5 - 24.9)$
   - Sobrepeso $(25.0 - 29.9)$
   - Obesidade $(\ge 30.0)$
+- [x] **Comparação com a População Brasileira (API do Banco Mundial):**
+  - Informa em qual percentual da população adulta brasileira do mesmo sexo o usuário se encaixa.
+  - O indicador de sobrepeso (IMC ≥ 25) já inclui os obesos, por isso as faixas são calculadas como: até 25 $= 100 - \text{sobrepeso}$, de 25 a 29,9 $= \text{sobrepeso} - \text{obesidade}$ e 30 ou mais $= \text{obesidade}$.
 - [x] **Validação Visual e Feedback Háptico:**
   - Mensagens de erro inline (*"campo obrigatório\*"*) diretamente nos inputs com bordas avermelhadas.
   - Alerta estilizado no layout com ícone sem popups intrusivos.
@@ -71,6 +74,8 @@ projeto-01/
     ├── db/
     │   ├── firebase.js      # Configuração e inicialização do Firebase
     │   └── storage.js       # Operações de CRUD no Firestore (coleção imc)
+    ├── services/
+    │   └── worldBank.js     # Chamada à API do Banco Mundial (dados por sexo)
     ├── theme/
     │   └── index.js         # Tokens de design e paletas (lightTheme e darkTheme)
     ├── styles/
@@ -91,6 +96,9 @@ projeto-01/
             ├── TableImc/
             │   ├── index.js # Tabela de referência com destaque dinâmico da faixa
             │   └── styles.js# Estilos desacoplados da tabela e linhas de destaque
+            ├── PopulationImc/
+            │   ├── index.js # Percentual da população brasileira na faixa do usuário
+            │   └── styles.js# Estilos do cartão de comparação
             └── HistoryImc/
                 ├── index.js # Histórico de cálculos em tempo real via Firestore
                 └── styles.js# Estilos do histórico com badges e botão de exclusão
@@ -103,11 +111,13 @@ projeto-01/
 | **`theme/`** | Centraliza paletas de cores, bordas e estados para os modos claro e escuro. |
 | **`db/firebase.js`** | Inicialização do SDK do Firebase conectado ao projeto. |
 | **`db/storage.js`** | Camada de dados para listar, salvar e excluir cálculos no Firestore. |
+| **`services/worldBank.js`** | Busca os indicadores de sobrepeso e obesidade do Brasil e calcula o percentual de cada faixa. |
 | **`Title`** | Renderiza o título e a identidade visual da aplicação. |
-| **`Form`** | Gerencia os estados (`weight`, `height`, `imc`), validações, cálculo e disparo da gravação. |
+| **`Form`** | Gerencia os estados (`weight`, `height`, `sex`, `imc`), validações, cálculo e disparo da gravação. |
 | **`ResultImc`** | Exibe via *props* o resultado numérico e o badge colorido com o diagnóstico. |
 | **`ImcMeter`** | Renderiza a escala gráfica de cores e anima o ponteiro até a posição exata do IMC. |
 | **`TableImc`** | Exibe as faixas da OMS e destaca automaticamente a faixa do usuário quando calculado. |
+| **`PopulationImc`** | Mostra o percentual da população brasileira que está na mesma faixa de IMC do usuário. |
 | **`HistoryImc`** | Lista o histórico de resultados e datas sincronizados em tempo real com o Firebase. |
 | **`App`** | Ponto de entrada, integrando o `ThemeProvider`, alternância de tema, barra de status e layout geral. |
 
@@ -130,6 +140,7 @@ projeto-01/
 - **[React Native](https://reactnative.dev/)** — Framework de desenvolvimento mobile cross-platform.
 - **[Expo](https://expo.dev/)** — Plataforma e conjunto de ferramentas para o ecossistema React Native.
 - **[Firebase / Firestore](https://firebase.google.com/)** — Banco de dados NoSQL em nuvem para persistência do histórico em tempo real.
+- **[API do Banco Mundial](https://api.worldbank.org)** — Dados de sobrepeso e obesidade da população brasileira, consumidos com `fetch`.
 - **[styled-components](https://styled-components.com/)** — Estilização modular via CSS-in-JS com suporte nativo a temas (`ThemeProvider`).
 - **[React Hooks](https://react.dev/)** — Gerenciamento de ciclo de vida e estado com `useState`, `useEffect`, `useRef` e `useColorScheme`.
 - **JavaScript (ES6+)** — Sintaxe moderna e modular.

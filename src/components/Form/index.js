@@ -9,6 +9,7 @@ import { useTheme } from 'styled-components/native';
 import ResultImc from './ResultImc';
 import TableImc from './TableImc';
 import ImcMeter from './ImcMeter';
+import PopulationImc from './PopulationImc';
 import HistoryImc from './HistoryImc';
 import Storage from '../../db/storage';
 
@@ -22,6 +23,9 @@ import {
   FormLabel,
   ErrorMessage,
   StyledInput,
+  SexOptions,
+  SexOption,
+  SexOptionText,
   ErrorBanner,
   ErrorBannerIcon,
   ErrorBannerText,
@@ -32,10 +36,16 @@ import {
   TextButtonReset,
 } from './styles';
 
+const SEX_OPTIONS = [
+  { value: 'feminino', label: 'Feminino' },
+  { value: 'masculino', label: 'Masculino' },
+];
+
 export default function Form() {
   const theme = useTheme();
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [sex, setSex] = useState(null);
   const [messageImc, setMessageImc] = useState('Preencha o peso e altura');
   const [imc, setImc] = useState(null);
   const [classification, setClassification] = useState('');
@@ -44,6 +54,7 @@ export default function Form() {
   // Estados de validação estilizada
   const [errorMessageHeight, setErrorMessageHeight] = useState(null);
   const [errorMessageWeight, setErrorMessageWeight] = useState(null);
+  const [errorMessageSex, setErrorMessageSex] = useState(null);
   const [generalError, setGeneralError] = useState(null);
 
   // Animações
@@ -97,6 +108,13 @@ export default function Form() {
       setErrorMessageWeight(null);
     }
 
+    if (!sex) {
+      setErrorMessageSex('campo obrigatório*');
+      hasError = true;
+    } else {
+      setErrorMessageSex(null);
+    }
+
     if (hasError) {
       Vibration.vibrate(200);
       triggerShake();
@@ -147,12 +165,14 @@ export default function Form() {
   function handleReset() {
     setWeight('');
     setHeight('');
+    setSex(null);
     setImc(null);
     setClassification('');
     setMessageImc('Preencha o peso e altura');
     setTextButton('Calcular');
     setErrorMessageHeight(null);
     setErrorMessageWeight(null);
+    setErrorMessageSex(null);
     setGeneralError(null);
   }
 
@@ -205,6 +225,35 @@ export default function Form() {
               />
             </FieldGroup>
 
+            {/* Campo Sexo */}
+            <FieldGroup>
+              <LabelRow>
+                <FormLabel>Sexo</FormLabel>
+                {errorMessageSex && (
+                  <ErrorMessage>{errorMessageSex}</ErrorMessage>
+                )}
+              </LabelRow>
+              <SexOptions>
+                {SEX_OPTIONS.map((option) => (
+                  <SexOption
+                    key={option.value}
+                    isSelected={sex === option.value}
+                    hasError={!!errorMessageSex}
+                    onPress={() => {
+                      setSex(option.value);
+                      if (errorMessageSex) setErrorMessageSex(null);
+                      if (generalError) setGeneralError(null);
+                    }}
+                    activeOpacity={0.7}
+                  >
+                    <SexOptionText isSelected={sex === option.value}>
+                      {option.label}
+                    </SexOptionText>
+                  </SexOption>
+                ))}
+              </SexOptions>
+            </FieldGroup>
+
             {/* Alerta Estilizado com Animação Shake */}
             {generalError && (
               <ErrorBanner style={{ transform: [{ translateX: shakeAnim }] }}>
@@ -253,6 +302,9 @@ export default function Form() {
 
             {/* Medidor Visual do IMC */}
             {imc && <ImcMeter imc={imc} />}
+
+            {/* Comparação com a População Brasileira */}
+            {imc && <PopulationImc imc={imc} sex={sex} />}
 
             {/* Tabela de Referência */}
             <TableImc currentClassification={classification} />
