@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "projeto-01",
-    "slug": "projeto-01",
+    "slug": "imc",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -19,6 +19,15 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-status-bar"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "0c4544cd-85c8-40b6-886b-0d3f85ebf6ca"
+      }
+    },
+    "owner": "tomcrivellaris-team"
   }
 }
